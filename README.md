@@ -1,0 +1,2 @@
+# EventSimulation
+用于测试IotEventMonitorPlatform的模拟事件生成器
