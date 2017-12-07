@@ -14,10 +14,10 @@ using namespace std;
 const string DEFAULT_SERVER_IP = "10.205.41.48";
 const uint DEFAULT_SERVER_PORT = 5556;
 
-const uint SLEEP_TIME = 1024000;
+const uint SLEEP_TIME = 10240;
 const uint TIME_ALL = 5000000;
 
-const uint EVENT_ALL = 1000000;
+const uint EVENT_ALL = 100;
 const uint EVENT_LENGTH = 100;
 const double IMPORTANT_EVENT_PRO = 0.0;
 

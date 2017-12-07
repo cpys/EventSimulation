@@ -3,6 +3,8 @@ project(EventSimulation)
 
 set(CMAKE_CXX_STANDARD 11)
 
-set(SOURCE_FILES src/EventSimulation.cpp)
+set(NET src/NetEventSimulation.cpp)
+set(SERIAL src/SerialPortEventSimulation.cpp src/SerialPortClient/SerialPortClient.h src/SerialPortClient/SerialPortClient.cpp)
 
-add_executable(EventSimulation ${SOURCE_FILES})
+add_executable(EventSimulation ${NET})
+add_executable(SerialPortEventSimulation ${SERIAL})
