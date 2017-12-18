@@ -13,11 +13,11 @@ using namespace std;
 const string DEFAULT_PORT_PATH = "/dev/ttyS0";
 
 const uint SLEEP_TIME = 1024000;
-const uint TIME_ALL = 5000000;
+const uint TIME_ALL = 50000000;
 
-const uint EVENT_ALL = 100;
+const uint EVENT_ALL = 10000;
 const uint EVENT_LENGTH = 100;
-const double IMPORTANT_EVENT_PRO = 0.0;
+const double IMPORTANT_EVENT_PRO = 0.5;
 
 string portPath;
 
@@ -32,10 +32,15 @@ uint usedTime;
 
 char events[EVENT_ALL + 1][EVENT_LENGTH + 1];
 
+string getEventImportant() {
+    if (rand() > RAND_MAX * IMPORTANT_EVENT_PRO) return "0";
+    else return "1";
+}
+
 void constructStaticEvent() {
     string eventHead, eventTail, event;
     for (uint i = 1; i <= EVENT_ALL; ++i) {
-        eventHead = "<xml type=\"event\" name=\"increase\" important=\"0\" num=\"" + to_string(i) + "\" attr=\"";
+        eventHead = "<xml type=\"event\" name=\"increase\" important=\"" + getEventImportant() + "\" num=\"" + to_string(i) + "\" attr=\"";
         eventTail = "\"><x>" + to_string(i % 100) + "</x></xml>";
         event = eventHead + string(EVENT_LENGTH - eventHead.size() - eventTail.size(), '*') + eventTail;
         strcpy(events[i], event.c_str());
@@ -82,6 +87,8 @@ int main(int argc, char **argv) {
         return -1;
     }
     cout << "port path is " << portPath << endl;
+
+    srand((unsigned)time(NULL));
 
     serialPortClient.setPort(portPath);
     if (!serialPortClient.init()) {
