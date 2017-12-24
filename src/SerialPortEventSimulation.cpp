@@ -18,7 +18,7 @@ const uint SLEEP_TIME = 1024000;
 
 const uint EVENT_ALL = 10000;
 const uint EVENT_LENGTH = 100;
-const double IMPORTANT_EVENT_PRO = 0.5;
+const double IMPORTANT_EVENT_PRO = 0.0;
 
 vector<string> IMPORTANT_EVENT_NAME_LIST = {
         "increase"
@@ -47,7 +47,7 @@ void constructStaticEvent() {
     string eventHead, eventTail, event;
     for (uint i = 1; i <= EVENT_ALL; ++i) {
         eventHead = "<xml type=\"event\" name=\"" + getEventName() + "\" num=\"" + to_string(i) + "\" attr=\"";
-        eventTail = "\"><x>" + to_string(i % 100) + "</x><y>" + to_string(i % 50) + "</y></xml>";
+        eventTail = "\"><x>" + to_string(i % 100) + "</x><y>" + to_string(i % 50) + "</y></xml>\n";
         event = eventHead + string(EVENT_LENGTH - eventHead.size() - eventTail.size(), '*') + eventTail;
         strcpy(events[i], event.c_str());
     }
@@ -61,11 +61,11 @@ void sendStaticEvent() {
     for (uint eventNum = 1; eventNum <= EVENT_ALL; ++eventNum) {
         if (!serialPortClient.sendMessage(events[eventNum])) {
             ++sendFailedNum;
-            printf("send event %s failed\n", events[eventNum]);
+            printf("send event failed:%s\n", events[eventNum]);
         }
-//        else {
-//            printf("send event %s success\n", events[eventNum]);
-//        }
+        else {
+            printf("send event success:%s\n", events[eventNum]);
+        }
         ++sendNum;
         usleep(SLEEP_TIME);
     }

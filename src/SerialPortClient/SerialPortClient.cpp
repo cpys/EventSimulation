@@ -47,17 +47,17 @@ void SerialPortClient::closePort() {
     }
 }
 
-//bool SerialPortClient::hasMessage() {
-//    FD_ZERO(&fs_read);
-//    FD_SET(fd, &fs_read);
-//    tv = defaultTv;
-//    fs_sel = select(fd + 1, &fs_read, NULL, NULL, &tv);
-//    return fs_sel > 0;
-//}
+bool SerialPortClient::hasMessage() {
+    FD_ZERO(&fs_read);
+    FD_SET(fd, &fs_read);
+    tv = defaultTv;
+    fs_sel = select(fd + 1, &fs_read, NULL, NULL, &tv);
+    return fs_sel > 0;
+}
 
 void SerialPortClient::getMessage() {
     int len = 0;
-    while (true) {
+    while(true) {
         int recv = read(fd, buffer + len , MAX_MSG - len);
         if (recv < MAX_MSG - len) {
             len += recv;

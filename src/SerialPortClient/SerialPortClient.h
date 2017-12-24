@@ -21,11 +21,11 @@ class SerialPortClient {
     bool init();  // 设置串口、打开串口
     void closePort();
 
-//    /**
-//     * 查看串口上是否收到字节流
-//     * @return
-//     */
-//    bool hasMessage();
+    /**
+     * 查看串口上是否收到字节流
+     * @return
+     */
+    bool hasMessage();
     /**
      * 从串口上获取字节流追加到缓存的字符队列后面
      * @return
