@@ -29,13 +29,11 @@ int main() {
 
     recvLen = 0;
     while (true) {
-        if (serialPortClient.hasMessage()) {
-            serialPortClient.getMessage();
-            string &messageQueue = serialPortClient.getMessageQueue();
-            recvLen += messageQueue.size();
-            cout << messageQueue;
-            messageQueue.clear();
-        }
+        serialPortClient.getMessage();
+        string &messageQueue = serialPortClient.getMessageQueue();
+        recvLen += messageQueue.size();
+        cout << messageQueue;
+        messageQueue.clear();
     }
 
     return 0;
