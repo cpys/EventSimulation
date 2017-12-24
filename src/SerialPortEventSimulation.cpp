@@ -61,10 +61,10 @@ void sendStaticEvent() {
     for (uint eventNum = 1; eventNum <= EVENT_ALL; ++eventNum) {
         if (!serialPortClient.sendMessage(events[eventNum])) {
             ++sendFailedNum;
-            printf("send event failed:%s\n", events[eventNum]);
+            printf("send event failed:%s", events[eventNum]);
         }
         else {
-            printf("send event success:%s\n", events[eventNum]);
+            printf("send event success:%s", events[eventNum]);
         }
         ++sendNum;
         usleep(SLEEP_TIME);
