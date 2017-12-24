@@ -67,7 +67,7 @@ class SerialPortClient {
     /**
      * 单行的最大字符数
      */
-    static const int MAX_LINE_SIZE = 40;
+    static const int MAX_LINE_SIZE = 200;
     /**
     * 消息最大长度
     */

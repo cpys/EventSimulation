@@ -56,39 +56,29 @@ bool SerialPortClient::hasMessage() {
 }
 
 void SerialPortClient::getMessage() {
-    int len = 0;
+    int len = 0, recvNum = 0;
     while(true) {
-        int recv = read(fd, buffer + len , MAX_MSG - len);
-        if (recv < MAX_MSG - len) {
-            len += recv;
+        recvNum = read(fd, buffer + len , MAX_MSG - len);
+        if (recvNum < 0) {
             break;
         }
-
-        len += recv;
+        len += recvNum;
         if (len > MAX_LINE_SIZE) {
             break;
         }
     }
 
-    messageQueue += string(std::begin(buffer), std::begin(buffer) + len);
+    if (len > 0) {
+        messageQueue += string(std::begin(buffer), std::begin(buffer) + len);
+    }
 }
 
 bool SerialPortClient::openPort() {
-    fd = open(port.c_str(), O_RDWR|O_NOCTTY|O_NDELAY);
+    fd = open(port.c_str(), O_RDWR|O_NOCTTY|O_NONBLOCK);
     if (fd < 0){
         cerr << "Can't Open Serial Port " << port << endl;
         return false;
     }
-    if(fcntl(fd, F_SETFL, 0) < 0){
-        cerr << "fcntl failed!" << endl;
-        return false;
-    }
-/*
-    if(0 == isatty(STDIN_FILENO)){
-        cerr << port << " is not a terminal device" << endl;
-        return false;
-    }
-*/
     return true;
 }
 

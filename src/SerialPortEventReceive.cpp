@@ -32,7 +32,7 @@ int main() {
         serialPortClient.getMessage();
         string &messageQueue = serialPortClient.getMessageQueue();
         recvLen += messageQueue.size();
-        cout << messageQueue;
+        cout << messageQueue << endl;
         messageQueue.clear();
     }
 
