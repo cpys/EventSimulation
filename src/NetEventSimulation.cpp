@@ -9,6 +9,7 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 #include <csignal>
+#include <vector>
 
 using namespace std;
 
@@ -16,24 +17,21 @@ const string DEFAULT_SERVER_IP = "10.108.164.222";
 const uint DEFAULT_SERVER_PORT = 5556;
 
 const uint SLEEP_TIME = 1024000;
-const unsigned long long TIME_ALL = 5000000;
+const uint SLEEP_EVENT_NUM = 1;
 
-const uint EVENT_ALL = 10;
+const uint EVENT_ALL = 1;
 const uint EVENT_LENGTH = 100;
 const double IMPORTANT_EVENT_PRO = 0.0;
+
+vector<string> IMPORTANT_EVENT_NAME_LIST = {
+        "increase"
+};
 
 string serverIp;
 uint serverPort;
 
 int clientSocket;
 struct sockaddr_in serverAddr;
-
-char eventBuffer[10000];
-char eventName[100];
-char eventImportant[10];
-
-clock_t startTime, endTime;
-unsigned long long usedTime;
 
 uint sendNum;
 uint sendFailedNum;
@@ -42,15 +40,19 @@ char events[EVENT_ALL + 1][EVENT_LENGTH + 1];
 
 void quit(int);
 
-string getEventImportant() {
-    if (rand() > RAND_MAX * IMPORTANT_EVENT_PRO) return "0";
-    else return "1";
+string getEventName() {
+    if (rand() > RAND_MAX * IMPORTANT_EVENT_PRO) {
+        return "notImportantEventName";
+    }
+    else {
+        return IMPORTANT_EVENT_NAME_LIST[rand() % IMPORTANT_EVENT_NAME_LIST.size()];
+    }
 }
 
 void constructStaticEvent() {
     string eventHead, eventTail, event;
     for (uint i = 1; i <= EVENT_ALL; ++i) {
-        eventHead = "<xml type=\"event\" name=\"donttran\" important=\"" + getEventImportant() + "\" num=\"" + to_string(i) + "\" attr=\"";
+        eventHead = "<xml type=\"event\" name=\"" + getEventName() + "\" num=\"" + to_string(i) + "\" attr=\"";
         eventTail = "\"><x>" + to_string(i % 100) + "</x><y>" + to_string(i % 50) + "</y></xml>";
         event = eventHead + string(EVENT_LENGTH - eventHead.size() - eventTail.size(), '*') + eventTail;
         strcpy(events[i], event.c_str());
@@ -60,19 +62,9 @@ void constructStaticEvent() {
 void sendStaticEvent() {
     sendFailedNum = 0;
     sendNum = 0;
-    usedTime = 0;
-    startTime = clock();
     printf("start send events\n");
-    for (uint eventNum = 1; eventNum <= EVENT_ALL ; ++eventNum) {
-        //if (usedTime > TIME_ALL) {
-         //   cout << "time out" << endl;
-          //  break;
-        //}
-        if (eventNum > EVENT_ALL) {
-            cout << "event send over" << endl;
-            break;
-        }
 
+    for (uint eventNum = 1; eventNum <= EVENT_ALL ; ++eventNum) {
         if (sendto(clientSocket, events[eventNum], EVENT_LENGTH, 0, (struct sockaddr *)&serverAddr, sizeof(serverAddr)) < 0) {
             ++sendFailedNum;
             printf("send event %s failed\n", events[eventNum]);
@@ -81,8 +73,9 @@ void sendStaticEvent() {
 //            printf("send event %s success\n", events[eventNum]);
         //}
         ++sendNum;
-        usleep(SLEEP_TIME);
-        //usedTime = (uint)((double)(clock() - startTime) / CLOCKS_PER_SEC * 1000000) + SLEEP_TIME * eventNum;
+        if (eventNum % SLEEP_EVENT_NUM == 0) {
+            usleep(SLEEP_TIME * SLEEP_EVENT_NUM);
+        }
     }
     cout << "success send event num:" << sendNum - sendFailedNum << "/" << sendNum << endl;
 }
@@ -127,28 +120,6 @@ int main(int argc, char **argv) {
 
     constructStaticEvent();
     sendStaticEvent();
-
-//    usedTime = 0;
-//    startTime = clock();
-//    for (uint eventNum = 1; ; ++eventNum) {
-//        if (usedTime > TIME_ALL) break;
-//        if (eventNum > EVENT_ALL) break;
-//
-//        strcpy(eventBuffer, R"border(<xml type="event" ")border");
-//        getEventName();
-//        strcat(eventBuffer, eventName);
-//        getEventImportant();
-//        strcat(eventBuffer, eventImportant);
-//
-//        strcat(eventBuffer, R"border(eventNum=")border");
-//        strcat(eventBuffer, to_string(eventNum).c_str());
-//
-//
-//
-//        usleep(SLEEP_TIME);
-//
-//        usedTime = (uint)((double)(clock() - startTime) / CLOCKS_PER_SEC * 1000000) + SLEEP_TIME * eventNum;
-//    }
 
     return 0;
 
